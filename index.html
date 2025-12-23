@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Komunikasi Guru & Wali Murid</title>
+  <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+        background: #f0f2f5;
+        color: #050505;
+    }
+
+    /* Header */
+    .header {
+        background: #1877f2;
+        color: white;
+        padding: 16px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+    }
+
+    .header-content {
+        max-width: 800px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .header-title {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .teacher-btn {
+        background: white;
+        color: #1877f2;
+        padding: 8px 16px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        transition: background 0.2s;
+    }
+
+    .teacher-btn:hover {
+        background: #e7f3ff;
+    }
+
+    .class-info {
+        font-size: 14px;
+        opacity: 0.9;
+    }
+
+    /* Main Container */
+    .container {
+        max-width: 800px;
+        margin: 80px auto 20px;
+        padding: 20px;
+    }
+
+    /* Post Card (Statement Guru) */
+    .post-card {
+        background: white;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    .post-header {
+        display: flex;
+        align-items: center;
+        padding: 16px;
+        gap: 12px;
+        background: #f8f9fa;
+    }
+
+    .avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+
+    .avatar.teacher {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .avatar.headmaster {
+        background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+    }
+
+    .avatar.operator {
+        background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+    }
+
+    .avatar.parent {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .post-info {
+        flex: 1;
+        min-width: 0; /* Mencegah teks meluber */
+    }
+
+    .post-author {
+        font-weight: 600;
+        font-size: 16px;
+        margin-bottom: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .post-role {
+        color: #65676b;
+        font-size: 13px;
+    }
+
+    .post-time {
+        color: #65676b;
+        font-size: 13px;
+    }
+
+    .post-content {
+        padding: 20px;
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    .post-subject {
+        display: inline-block;
+        background: #e7f3ff;
+        color: #1877f2;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+
+    /* Comments Section */
+    .comments-section {
+        border-top: 1px solid #e4e6eb;
+        padding: 16px;
+        background: #f8f9fa;
+    }
+
+    .comments-count {
+        color: #65676b;
+        font-size: 14px;
+        margin-bottom: 12px;
+        font-weight: 600;
+    }
+
+    .comment {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 12px;
+        padding: 12px;
+        background: white;
+        border-radius: 8px;
+        position: relative;
+    }
+
+    .comment:hover .delete-btn {
+        opacity: 1;
+    }
+
+    .delete-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: #ff4444;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.2s, background 0.2s;
+    }
+
+    .delete-btn:hover {
+        background: #cc0000;
+    }
+
+    .post-delete-btn {
+        background: #ff4444;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        cursor: pointer;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+        flex-shrink: 0;
+    }
+
+    .post-delete-btn:hover {
+        background: #cc0000;
+    }
+
+    .comment-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 14px;
+        flex-shrink: 0;
+    }
+
+    .comment-content {
+        flex: 1;
+        min-width: 0; /* Mencegah teks meluber */
+    }
+
+    .comment-author {
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .comment-text {
+        font-size: 14px;
+        line-height: 1.5;
+        color: #333;
+        word-wrap: break-word; /* Memastikan kata panjang pindah baris */
+    }
+
+    .comment-time {
+        color: #65676b;
+        font-size: 12px;
+        margin-top: 4px;
+    }
+
+    /* Add Comment */
+    .add-comment {
+        display: flex;
+        gap: 10px;
+        margin-top: 12px;
+    }
+
+    .add-comment input {
+        flex: 1;
+        padding: 10px 16px;
+        border-radius: 20px;
+        border: 1px solid #ddd;
+        font-size: 14px;
+    }
+
+    .add-comment input:focus {
+        outline: none;
+        border-color: #1877f2;
+    }
+
+    .add-comment button {
+        padding: 10px 20px;
+        background: #1877f2;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background 0.2s;
+        white-space: nowrap; /* Mencegah teks tombol pindah baris */
+    }
+
+    .add-comment button:hover {
+        background: #166fe5;
+    }
+
+    /* Modal */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+        overflow-y: auto;
+    }
+
+    .modal.active {
+        display: flex;
+    }
+
+    .modal-content {
+        background: white;
+        padding: 24px;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 500px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        margin: 20px;
+    }
+
+    .modal-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 16px;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        font-family: inherit;
+    }
+
+    .form-group input:disabled {
+        background-color: #f0f2f5;
+        cursor: not-allowed;
+    }
+
+    .form-group textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #1877f2;
+    }
+
+    .subject-options {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .subject-option {
+        padding: 8px 16px;
+        border: 2px solid #e4e6eb;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s;
+    }
+
+    .subject-option:hover {
+        border-color: #1877f2;
+        background: #e7f3ff;
+    }
+
+    .subject-option.active {
+        border-color: #1877f2;
+        background: #1877f2;
+        color: white;
+    }
+
+    .modal-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+
+    .modal-buttons button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .btn-cancel {
+        background: #e4e6eb;
+        color: #333;
+    }
+
+    .btn-submit {
+        background: #1877f2;
+        color: white;
+    }
+
+    .btn-submit:hover {
+        background: #166fe5;
+    }
+
+    /* =================================== */
+    /* PERBAIKAN UNTUK TAMPILAN MOBILE/HP */
+    /* =================================== */
+/* =================================== */
+/* PERBAIKAN UNTUK TAMPILAN MOBILE/HP */
+/* =================================== */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+        margin-top: 120px; /* PERUBAHAN: Tambah jarak atas agar tidak tertutup header */
+    }
+    
+    .header-content {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .teacher-btn {
+        width: 100%;
+        padding: 12px 20px;
+        font-size: 16px;
+    }
+
+    .post-card {
+        margin-bottom: 15px;
+    }
+
+    .post-header {
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+
+    .post-author {
+        font-size: 15px;
+    }
+
+    .post-role, .post-time {
+        font-size: 12px;
+    }
+
+    .post-delete-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+    
+    .post-content {
+        padding: 15px;
+        font-size: 14px;
+    }
+
+    .comments-section {
+        padding: 12px;
+    }
+
+    .comment {
+        padding: 10px;
+        gap: 8px;
+    }
+
+    .comment-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
+    }
+
+    .comment-author {
+        font-size: 13px;
+    }
+
+    .comment-text {
+        font-size: 13px;
+    }
+
+    .comment-time {
+        font-size: 11px;
+    }
+
+    .delete-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 14px;
+        top: 5px;
+        right: 5px;
+    }
+
+    .add-comment {
+        gap: 8px;
+    }
+
+    /* Mencegah zoom otomatis saat fokus pada input di iOS */
+    .add-comment input {
+        font-size: 16px;
+        padding: 12px 16px;
+    }
+
+    .add-comment button {
+        padding: 12px 24px;
+        font-size: 16px;
+    }
+
+    /* PERUBAHAN: Modal di mobile agar tidak terpotong */
+    .modal {
+        align-items: flex-start; /* Modal mulai dari atas */
+        padding: 40px 0; /* Beri jarak yang cukup dari atas dan bawah */
+    }
+
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+    }
+
+    /* Mencegah zoom otomatis di form modal */
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 16px;
+        padding: 12px;
+    }
+
+    }
+</style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div>
+                <div class="header-title">📚 Portal Komunikasi Sekolah</div>
+                <div class="class-info">SD Negeri 2 Karangmangu</div>
+            </div>
+            <button class="teacher-btn" onclick="openAnnouncementModal()">➕ Buat Pengumuman</button>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+
+        <!-- Modal Input Pengumuman Guru -->
+        <div class="modal" id="announcementModal">
+            <div class="modal-content">
+                <div class="modal-title">📢 Buat Pengumuman Baru</div>
+                
+                <!-- Form Password -->
+                <div id="passwordForm">
+                    <div class="form-group">
+                        <label>🔒 Password Guru</label>
+                        <input type="password" id="teacherPassword" placeholder="Masukkan password guru">
+                      
+                    </div>
+                    <div class="modal-buttons">
+                        <button class="btn-cancel" onclick="closeAnnouncementModal()">Batal</button>
+                        <button class="btn-submit" onclick="verifyPassword()">Verifikasi</button>
+                    </div>
+                </div>
+
+                <!-- Form Pengumuman (Hidden by default) -->
+                <div id="announcementForm" style="display: none;">
+                    <div class="form-group">
+                        <label>Nama Lengkap</label>
+                        <input type="text" id="teacherName" placeholder="Contoh: Bu Hesti Wijayanti">
+                    </div>
+                    <!-- PERUBAHAN: Tambah field Peran dan Kelas -->
+                    <div class="form-group">
+                        <label>Peran</label>
+                        <select id="teacherRole" onchange="toggleClassInput()">
+                            <option value="">-- Pilih Peran --</option>
+                            <option value="Wali Kelas">Wali Kelas</option>
+                            <option value="Kepala Sekolah">Kepala Sekolah</option>
+                            <option value="Operator Sekolah">Operator Sekolah</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Kelas (Jika Wali Kelas)</label>
+                        <input type="text" id="teacherClass" placeholder="Contoh: 5A" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Kategori Pengumuman</label>
+                        <div class="subject-options">
+                            <div class="subject-option" onclick="selectSubject(this, '📖 Pengumuman Penting')">📖 Pengumuman</div>
+                            <div class="subject-option" onclick="selectSubject(this, '📝 Tugas')">📝 Tugas</div>
+                            <div class="subject-option" onclick="selectSubject(this, '⚽ Kegiatan')">⚽ Kegiatan</div>
+                            <div class="subject-option" onclick="selectSubject(this, '📚 Materi Pelajaran')">📚 Materi</div>
+                            <div class="subject-option" onclick="selectSubject(this, '🎉 Acara')">🎉 Acara</div>
+                        </div>
+                        <input type="hidden" id="selectedSubject">
+                    </div>
+                    <div class="form-group">
+                        <label>Isi Pengumuman</label>
+                        <textarea id="announcementContent" placeholder="Tulis pengumuman Anda di sini..."></textarea>
+                    </div>
+                    <div class="modal-buttons">
+                        <button class="btn-cancel" onclick="closeAnnouncementModal()">Batal</button>
+                        <button class="btn-submit" onclick="submitAnnouncement()">Posting Pengumuman</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Input Nama -->
+        <div class="modal" id="commentModal">
+            <div class="modal-content">
+                <div class="modal-title">✍️ Tulis Komentar</div>
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" id="userName" placeholder="Contoh: Ibu Siti">
+                </div>
+                <div class="form-group">
+                    <label>Sebagai Orang Tua Dari</label>
+                    <input type="text" id="studentName" placeholder="Contoh: Ahmad">
+                </div>
+                <div class="form-group">
+                    <label>Komentar</label>
+                    <input type="text" id="userComment" placeholder="Tulis komentar Anda...">
+                </div>
+                <div class="modal-buttons">
+                    <button class="btn-cancel" onclick="closeModal()">Batal</button>
+                    <button class="btn-submit" onclick="submitComment()">Kirim Komentar</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CONTOH: Statement dari Kepala Sekolah -->
+
+
+    </div>
+
+    <script>
+        let currentPostId = null;
+        let selectedSubjectText = '';
+        const TEACHER_PASSWORD = 'guru123';
+
+        window.addEventListener('DOMContentLoaded', function() {
+            loadAnnouncements();
+            loadComments();
+        });
+
+        function loadAnnouncements() {
+            const savedAnnouncements = localStorage.getItem('teacherAnnouncements');
+            if (savedAnnouncements) {
+                const announcements = JSON.parse(savedAnnouncements);
+                announcements.forEach(announcement => {
+                    if (!document.querySelector(`[data-post-id="${announcement.postId}"]`)) {
+                        addAnnouncementToDOM(announcement.teacherName, announcement.teacherRole, announcement.teacherClass, announcement.subject, announcement.content, announcement.time, announcement.postId);
+                    }
+                });
+            }
+        }
+
+        function loadComments() {
+            const savedComments = localStorage.getItem('teacherComments');
+            if (savedComments) {
+                const comments = JSON.parse(savedComments);
+                
+                comments.forEach(comment => {
+                    const targetPost = document.querySelector(`[data-post-id="${comment.postId}"]`);
+                    if (targetPost && !document.querySelector(`[data-comment-id="${comment.commentId}"]`)) {
+                        addCommentToDOM(comment.postId, comment.userName, comment.studentName, comment.userComment, comment.time, comment.color, comment.initials, comment.commentId, false);
+                    }
+                });
+            }
+
+            document.querySelectorAll('.post-card').forEach(post => {
+                const commentCount = post.querySelectorAll('.comment').length;
+                const countElement = post.querySelector('.comments-count');
+                if (countElement) {
+                    countElement.textContent = `💬 ${commentCount} Komentar`;
+                }
+            });
+        }
+
+        function selectSubject(element, subject) {
+            document.querySelectorAll('.subject-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            element.classList.add('active');
+            selectedSubjectText = subject;
+            document.getElementById('selectedSubject').value = subject;
+        }
+
+        // PERUBAHAN: Fungsi untuk mengaktifkan/nonaktifkan input kelas
+        function toggleClassInput() {
+            const role = document.getElementById('teacherRole').value;
+            const classInput = document.getElementById('teacherClass');
+            if (role === 'Wali Kelas') {
+                classInput.disabled = false;
+                classInput.focus();
+            } else {
+                classInput.disabled = true;
+                classInput.value = '';
+            }
+        }
+
+        function verifyPassword() {
+            const inputPassword = document.getElementById('teacherPassword').value;
+            
+            if (inputPassword === '') {
+                alert('Mohon masukkan password!');
+                return;
+            }
+
+            if (inputPassword === TEACHER_PASSWORD) {
+                document.getElementById('passwordForm').style.display = 'none';
+                document.getElementById('announcementForm').style.display = 'block';
+                document.getElementById('teacherName').focus();
+            } else {
+                alert('❌ Password salah! Hanya guru yang bisa membuat pengumuman.');
+                document.getElementById('teacherPassword').value = '';
+                document.getElementById('teacherPassword').focus();
+            }
+        }
+
+        function openAnnouncementModal() {
+            document.getElementById('announcementModal').classList.add('active');
+            document.getElementById('passwordForm').style.display = 'block';
+            document.getElementById('announcementForm').style.display = 'none';
+            document.getElementById('teacherPassword').focus();
+        }
+
+        function closeAnnouncementModal() {
+            document.getElementById('announcementModal').classList.remove('active');
+            // Reset form fields
+            document.getElementById('teacherPassword').value = '';
+            document.getElementById('teacherName').value = '';
+            document.getElementById('teacherRole').value = '';
+            document.getElementById('teacherClass').value = '';
+            document.getElementById('teacherClass').disabled = true;
+            document.getElementById('announcementContent').value = '';
+            document.getElementById('selectedSubject').value = '';
+            selectedSubjectText = '';
+            document.querySelectorAll('.subject-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+        }
+
+        function submitAnnouncement() {
+            const teacherName = document.getElementById('teacherName').value.trim();
+            const teacherRole = document.getElementById('teacherRole').value;
+            const teacherClass = document.getElementById('teacherClass').value.trim();
+            const content = document.getElementById('announcementContent').value.trim();
+            const subject = document.getElementById('selectedSubject').value;
+
+            if (teacherName === '' || teacherRole === '' || content === '') {
+                alert('Mohon lengkapi semua field yang wajib diisi!');
+                return;
+            }
+            
+            if (teacherRole === 'Wali Kelas' && teacherClass === '') {
+                alert('Mohon isi kelas untuk Wali Kelas!');
+                return;
+            }
+
+            if (subject === '') {
+                alert('Mohon pilih kategori pengumuman!');
+                return;
+            }
+
+            const postId = 'post_' + Date.now();
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const time = `Hari ini, ${hours}:${minutes}`;
+
+            // PERUBAHAN: Simpan data baru
+            saveAnnouncement(teacherName, teacherRole, teacherClass, subject, content, time, postId);
+            addAnnouncementToDOM(teacherName, teacherRole, teacherClass, subject, content, time, postId);
+            closeAnnouncementModal();
+
+            setTimeout(() => {
+                document.querySelector(`[data-post-id="${postId}"]`).scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+
+        // PERUBAHAN: Simpan data peran dan kelas
+        function saveAnnouncement(teacherName, teacherRole, teacherClass, subject, content, time, postId) {
+            let announcements = JSON.parse(localStorage.getItem('teacherAnnouncements') || '[]');
+            announcements.unshift({
+                teacherName, teacherRole, teacherClass, subject, content, time, postId,
+                timestamp: new Date().getTime()
+            });
+            localStorage.setItem('teacherAnnouncements', JSON.stringify(announcements));
+        }
+
+        // PERUBAHAN: Tambahkan logika untuk menampilkan peran dan kelas
+        function addAnnouncementToDOM(teacherName, teacherRole, teacherClass, subject, content, time, postId) {
+            const initials = teacherName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            
+            // Tentukan role string dan avatar class
+            let roleString = teacherRole;
+            let avatarClass = 'teacher'; // default
+            
+            if (teacherRole === 'Kepala Sekolah') {
+                roleString = 'Kepala Sekolah';
+                avatarClass = 'headmaster';
+            } else if (teacherRole === 'Operator Sekolah') {
+                roleString = 'Operator Sekolah';
+                avatarClass = 'operator';
+            } else if (teacherRole === 'Wali Kelas') {
+                roleString = `Wali Kelas ${teacherClass}`;
+            }
+
+            const newPost = document.createElement('div');
+            newPost.className = 'post-card';
+            newPost.setAttribute('data-post-id', postId);
+            
+            newPost.innerHTML = `
+                <div class="post-header">
+                    <div class="avatar ${avatarClass}">${initials}</div>
+                    <div class="post-info">
+                        <div class="post-author">${teacherName}</div>
+                        <div class="post-role">${roleString}</div>
+                        <div class="post-time">${time}</div>
+                    </div>
+                    <button class="post-delete-btn" onclick="deletePost('${postId}')" title="Hapus pengumuman">🗑️</button>
+                </div>
+                <div class="post-content">
+                    <span class="post-subject">${subject}</span>
+                    <p style="white-space: pre-line;">${content}</p>
+                </div>
+                <div class="comments-section">
+                    <div class="comments-count">💬 0 Komentar</div>
+                    <div class="add-comment">
+                        <div class="comment-avatar parent" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">A</div>
+                        <input type="text" placeholder="Tulis komentar..." readonly onclick="openModal('${postId}')">
+                        <button onclick="openModal('${postId}')">Kirim</button>
+                    </div>
+                </div>
+            `;
+
+            const container = document.querySelector('.container');
+            container.insertBefore(newPost, container.firstChild);
+        }
+
+        function saveComment(postId, userName, studentName, userComment, time, color, initials) {
+            let comments = JSON.parse(localStorage.getItem('teacherComments') || '[]');
+            const commentId = 'comment_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            
+            comments.push({
+                postId, userName, studentName, userComment, time, color, initials, commentId,
+                timestamp: new Date().getTime()
+            });
+            
+            localStorage.setItem('teacherComments', JSON.stringify(comments));
+            return commentId;
+        }
+
+        function openModal(postId) {
+            currentPostId = postId;
+            document.getElementById('commentModal').classList.add('active');
+            document.getElementById('userName').focus();
+        }
+
+        function closeModal() {
+            document.getElementById('commentModal').classList.remove('active');
+            document.getElementById('userName').value = '';
+            document.getElementById('studentName').value = '';
+            document.getElementById('userComment').value = '';
+            currentPostId = null;
+        }
+
+        function addCommentToDOM(postId, userName, studentName, userComment, time, color, initials, commentId, updateCount = true) {
+            const newComment = document.createElement('div');
+            newComment.className = 'comment';
+            newComment.setAttribute('data-comment-id', commentId);
+            
+            newComment.innerHTML = `
+                <div class="comment-avatar parent" style="background: ${color};">${initials}</div>
+                <div class="comment-content">
+                    <div class="comment-author">${userName} (Orang Tua ${studentName})</div>
+                    <div class="comment-text">${userComment}</div>
+                    <div class="comment-time">${time}</div>
+                </div>
+                <button class="delete-btn" onclick="deleteComment(this, '${postId}', '${commentId}')" title="Hapus komentar">✕</button>
+            `;
+
+            const targetPost = document.querySelector(`[data-post-id="${postId}"]`);
+            if (targetPost) {
+                const addCommentForm = targetPost.querySelector('.add-comment');
+                const commentsCount = targetPost.querySelector('.comments-count');
+                
+                if (updateCount) {
+                    const currentCount = parseInt(commentsCount.textContent.match(/\d+/)[0]);
+                    commentsCount.textContent = `💬 ${currentCount + 1} Komentar`;
+                }
+                
+                addCommentForm.parentNode.insertBefore(newComment, addCommentForm);
+            }
+
+            return newComment;
+        }
+
+        function deleteComment(buttonElement, postId, commentId) {
+            if (!confirm('Apakah Anda yakin ingin menghapus komentar ini?')) {
+                return;
+            }
+
+            const commentElement = buttonElement.closest('.comment');
+            commentElement.remove();
+
+            const targetPost = document.querySelector(`[data-post-id="${postId}"]`);
+            if (targetPost) {
+                const commentsCount = targetPost.querySelector('.comments-count');
+                const currentCount = parseInt(commentsCount.textContent.match(/\d+/)[0]);
+                commentsCount.textContent = `💬 ${Math.max(0, currentCount - 1)} Komentar`;
+            }
+
+            if (commentId) {
+                let comments = JSON.parse(localStorage.getItem('teacherComments') || '[]');
+                comments = comments.filter(comment => comment.commentId !== commentId);
+                localStorage.setItem('teacherComments', JSON.stringify(comments));
+            }
+        }
+
+        function deletePost(postId) {
+            const password = prompt('Masukkan password guru untuk menghapus pengumuman:');
+            
+            if (!password || password !== TEACHER_PASSWORD) {
+                alert('❌ Password salah atau dibatalkan!');
+                return;
+            }
+
+            if (!confirm('Apakah Anda yakin ingin menghapus pengumuman ini? Semua komentar juga akan terhapus.')) {
+                return;
+            }
+
+            const postElement = document.querySelector(`[data-post-id="${postId}"]`);
+            if (postElement) {
+                postElement.remove();
+            }
+
+            let announcements = JSON.parse(localStorage.getItem('teacherAnnouncements') || '[]');
+            announcements = announcements.filter(a => a.postId !== postId);
+            localStorage.setItem('teacherAnnouncements', JSON.stringify(announcements));
+
+            let comments = JSON.parse(localStorage.getItem('teacherComments') || '[]');
+            comments = comments.filter(c => c.postId !== postId);
+            localStorage.setItem('teacherComments', JSON.stringify(comments));
+        }
+
+        function submitComment() {
+            const userName = document.getElementById('userName').value.trim();
+            const studentName = document.getElementById('studentName').value.trim();
+            const userComment = document.getElementById('userComment').value.trim();
+
+            if (userName === '' || studentName === '' || userComment === '') {
+                alert('Mohon isi semua field dengan lengkap!');
+                return;
+            }
+
+            const now = new Date();
+            const time = now.getHours().toString().padStart(2, '0') + ':' + 
+                        now.getMinutes().toString().padStart(2, '0');
+
+            const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            
+            const colors = [
+                'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+                'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+                'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+            ];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+            const commentId = saveComment(currentPostId, userName, studentName, userComment, time, randomColor, initials);
+            const newComment = addCommentToDOM(currentPostId, userName, studentName, userComment, time, randomColor, initials, commentId, true);
+
+            closeModal();
+
+            setTimeout(() => {
+                newComment.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+
+        // Event listener
+        document.getElementById('teacherPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') verifyPassword();
+        });
+        document.getElementById('userName').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') document.getElementById('studentName').focus();
+        });
+        document.getElementById('studentName').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') document.getElementById('userComment').focus();
+        });
+        document.getElementById('userComment').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') submitComment();
+        });
+
+        document.getElementById('commentModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+        document.getElementById('announcementModal').addEventListener('click', function(e) {
+            if (e.target === this) closeAnnouncementModal();
+        });
+    </script>
+</body>
+</html>
