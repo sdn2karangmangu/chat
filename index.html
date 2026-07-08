@@ -644,7 +644,7 @@
     <script>
         // GANTI dengan URL Web App hasil deploy Code.gs (Deploy > New deployment > Web app).
 // URL di bawah ini contoh lama — pastikan diganti dengan URL deployment terbaru kamu.
-const API_URL = "https://script.google.com/macros/s/AKfycbwWGbF0Gtv5k6PwpZU_bxnnsFYLlLftCO3hGvVkesoQ2kBMLEb5ogCJr-zJAoBYVO36Mg/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycby1OmJdgQ8EYlqnQ2KM91SCsjb6V34sqnLar0PpOQMe4gla0oixblSBbx9GjeioQFFa/exec";
 
 let currentPostId = null;
 let selectedSubjectText = '';
@@ -679,13 +679,18 @@ async function fetchData(sheet, action = null, postId = null) {
         let url = `${API_URL}?sheet=${sheet}`;
         if (action) url += `&action=${action}`;
         if (postId) url += `&postId=${postId}`;
-        
+
+        // FIX 4 (CORS): jangan set header 'Content-Type' di request GET.
+        // Menambahkan header itu membuat browser menganggap ini request
+        // "tidak sederhana" dan mengirim OPTIONS (preflight) dulu sebelum
+        // GET yang sebenarnya. Apps Script tidak bisa membalas preflight,
+        // jadi browser langsung memblokir seluruh request dengan CORS error
+        // — inilah sebabnya data yang SUDAH tersimpan di spreadsheet tetap
+        // tidak muncul saat halaman dibuka lagi. GET tanpa header custom
+        // otomatis jadi "simple request" dan tidak butuh preflight sama sekali.
         const response = await fetch(url, {
             method: 'GET',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            mode: 'cors'
         });
         
         const data = await response.json();
