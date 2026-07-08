@@ -17,7 +17,6 @@
         color: #050505;
     }
 
-    /* Header */
     .header {
         background: #1877f2;
         color: white;
@@ -63,14 +62,12 @@
         opacity: 0.9;
     }
 
-    /* Main Container */
     .container {
         max-width: 800px;
         margin: 80px auto 20px;
         padding: 20px;
     }
 
-    /* Post Card (Statement Guru) */
     .post-card {
         background: white;
         border-radius: 8px;
@@ -118,7 +115,7 @@
 
     .post-info {
         flex: 1;
-        min-width: 0; /* Mencegah teks meluber */
+        min-width: 0;
     }
 
     .post-author {
@@ -157,7 +154,6 @@
         margin-bottom: 12px;
     }
 
-    /* Comments Section */
     .comments-section {
         border-top: 1px solid #e4e6eb;
         padding: 16px;
@@ -243,7 +239,7 @@
 
     .comment-content {
         flex: 1;
-        min-width: 0; /* Mencegah teks meluber */
+        min-width: 0;
     }
 
     .comment-author {
@@ -256,7 +252,7 @@
         font-size: 14px;
         line-height: 1.5;
         color: #333;
-        word-wrap: break-word; /* Memastikan kata panjang pindah baris */
+        word-wrap: break-word;
     }
 
     .comment-time {
@@ -265,7 +261,6 @@
         margin-top: 4px;
     }
 
-    /* Add Comment */
     .add-comment {
         display: flex;
         gap: 10px;
@@ -294,14 +289,13 @@
         cursor: pointer;
         font-weight: 600;
         transition: background 0.2s;
-        white-space: nowrap; /* Mencegah teks tombol pindah baris */
+        white-space: nowrap;
     }
 
     .add-comment button:hover {
         background: #166fe5;
     }
 
-    /* Modal */
     .modal {
         display: none;
         position: fixed;
@@ -431,16 +425,10 @@
         background: #166fe5;
     }
 
-    /* =================================== */
-    /* PERBAIKAN UNTUK TAMPILAN MOBILE/HP */
-    /* =================================== */
-/* =================================== */
-/* PERBAIKAN UNTUK TAMPILAN MOBILE/HP */
-/* =================================== */
 @media (max-width: 768px) {
     .container {
         padding: 10px;
-        margin-top: 120px; /* PERUBAHAN: Tambah jarak atas agar tidak tertutup header */
+        margin-top: 120px;
     }
     
     .header-content {
@@ -529,7 +517,6 @@
         gap: 8px;
     }
 
-    /* Mencegah zoom otomatis saat fokus pada input di iOS */
     .add-comment input {
         font-size: 16px;
         padding: 12px 16px;
@@ -540,10 +527,9 @@
         font-size: 16px;
     }
 
-    /* PERUBAHAN: Modal di mobile agar tidak terpotong */
     .modal {
-        align-items: flex-start; /* Modal mulai dari atas */
-        padding: 40px 0; /* Beri jarak yang cukup dari atas dan bawah */
+        align-items: flex-start;
+        padding: 40px 0;
     }
 
     .modal-content {
@@ -551,7 +537,6 @@
         padding: 20px;
     }
 
-    /* Mencegah zoom otomatis di form modal */
     .form-group input,
     .form-group select,
     .form-group textarea {
@@ -563,7 +548,6 @@
 </style>
 </head>
 <body>
-    <!-- Header -->
     <div class="header">
         <div class="header-content">
             <div>
@@ -574,15 +558,12 @@
         </div>
     </div>
 
-    <!-- Main Container -->
     <div class="container">
 
-        <!-- Modal Input Pengumuman Guru -->
         <div class="modal" id="announcementModal">
             <div class="modal-content">
                 <div class="modal-title">📢 Buat Pengumuman Baru</div>
                 
-                <!-- Form Password -->
                 <div id="passwordForm">
                     <div class="form-group">
                         <label>🔒 Password Guru</label>
@@ -595,13 +576,11 @@
                     </div>
                 </div>
 
-                <!-- Form Pengumuman (Hidden by default) -->
                 <div id="announcementForm" style="display: none;">
                     <div class="form-group">
                         <label>Nama Lengkap</label>
                         <input type="text" id="teacherName" placeholder="Contoh: Bu Hesti Wijayanti">
                     </div>
-                    <!-- PERUBAHAN: Tambah field Peran dan Kelas -->
                     <div class="form-group">
                         <label>Peran</label>
                         <select id="teacherRole" onchange="toggleClassInput()">
@@ -638,7 +617,6 @@
             </div>
         </div>
 
-        <!-- Modal Input Nama -->
         <div class="modal" id="commentModal">
             <div class="modal-content">
                 <div class="modal-title">✍️ Tulis Komentar</div>
@@ -660,34 +638,48 @@
                 </div>
             </div>
         </div>
-        
-        <!-- CONTOH: Statement dari Kepala Sekolah -->
-
 
     </div>
 
     <script>
-        // Ganti dengan URL Web App Anda
-const API_URL = "https://script.google.com/macros/s/AKfycby1OmJdgQ8EYlqnQ2KM91SCsjb6V34sqnLar0PpOQMe4gla0oixblSBbx9GjeioQFFa/exec";
+        // GANTI dengan URL Web App hasil deploy Code.gs (Deploy > New deployment > Web app).
+// URL di bawah ini contoh lama — pastikan diganti dengan URL deployment terbaru kamu.
+const API_URL = "https://script.google.com/macros/s/AKfycbwWGbF0Gtv5k6PwpZU_bxnnsFYLlLftCO3hGvVkesoQ2kBMLEb5ogCJr-zJAoBYVO36Mg/exec";
 
 let currentPostId = null;
 let selectedSubjectText = '';
 const TEACHER_PASSWORD = 'guru123';
 
-window.addEventListener('DOMContentLoaded', function() {
-    loadAnnouncements();
-    loadComments();
+// FIX 1: DOMContentLoaded dibuat async dan pemanggilannya di-await berurutan,
+// supaya komentar dimuat SETELAH post/pengumuman selesai dibuat di DOM.
+// Sebelumnya loadAnnouncements() dan loadComments() dipanggil bersamaan tanpa
+// menunggu (tanpa await), sehingga sering terjadi race condition: loadComments()
+// mencari elemen post-card yang belum ada, akibatnya komentar gagal muncul saat
+// pertama kali halaman dibuka.
+window.addEventListener('DOMContentLoaded', async function() {
+    await loadAnnouncements();
+    await loadComments();
 });
 
+// FIX 2: fungsi escapeHtml untuk mencegah celah XSS.
+// Sebelumnya semua input pengguna (nama, komentar, isi pengumuman, dst) langsung
+// dimasukkan ke innerHTML tanpa disaring. Jika ada orang yang mengetik kode
+// HTML/script di kolom nama atau komentar, kode itu akan ikut dieksekusi di
+// browser semua pengguna lain yang membuka halaman. Sekarang semua teks dari
+// pengguna di-escape dulu sebelum ditampilkan.
+function escapeHtml(text) {
+    if (text === null || text === undefined) return '';
+    const div = document.createElement('div');
+    div.textContent = String(text);
+    return div.innerHTML;
+}
 
-// Fungsi untuk mengambil data dari API
 async function fetchData(sheet, action = null, postId = null) {
     try {
         let url = `${API_URL}?sheet=${sheet}`;
         if (action) url += `&action=${action}`;
         if (postId) url += `&postId=${postId}`;
         
-        // Gunakan mode no-cors untuk menghindari masalah CORS saat testing lokal
         const response = await fetch(url, {
             method: 'GET',
             mode: 'cors',
@@ -710,14 +702,21 @@ async function fetchData(sheet, action = null, postId = null) {
     }
 }
 
-// Fungsi untuk mengirim data ke API
 async function postData(sheet, action, data) {
     try {
+        // FIX 3 (CORS): Content-Type sengaja dibuat 'text/plain' (bukan
+        // 'application/json'). Kalau pakai 'application/json', browser akan
+        // mengirim permintaan "preflight" (OPTIONS) dulu sebelum POST, dan
+        // Google Apps Script Web App TIDAK bisa membalas preflight itu —
+        // hasilnya error CORS yang membingungkan meskipun URL & deploy-nya
+        // sudah benar. Dengan 'text/plain', browser mengirim POST langsung
+        // tanpa preflight, dan backend (Code.gs) tetap bisa mem-parsing isi
+        // body-nya sebagai JSON lewat e.postData.contents.
         const response = await fetch(API_URL, {
             method: 'POST',
             mode: 'cors',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'text/plain;charset=utf-8',
             },
             body: JSON.stringify({
                 sheet: sheet,
@@ -739,8 +738,6 @@ async function postData(sheet, action, data) {
         return false;
     }
 }
-
-
 
 async function loadAnnouncements() {
     const announcements = await fetchData('pengumuman');
@@ -819,7 +816,6 @@ function openAnnouncementModal() {
 
 function closeAnnouncementModal() {
     document.getElementById('announcementModal').classList.remove('active');
-    // Reset form fields
     document.getElementById('teacherPassword').value = '';
     document.getElementById('teacherName').value = '';
     document.getElementById('teacherRole').value = '';
@@ -861,10 +857,15 @@ async function submitAnnouncement() {
     const minutes = now.getMinutes().toString().padStart(2, '0');
     const time = `Hari ini, ${hours}:${minutes}`;
 
-    // Simpan data ke Google Spreadsheet
+    // Password diambil dari field yang sama dipakai saat verifikasi awal
+    // (nilainya masih ada di DOM meski formnya disembunyikan), lalu dikirim
+    // ke backend supaya server yang memutuskan valid/tidaknya — bukan hanya
+    // JavaScript di browser.
+    const teacherPasswordValue = document.getElementById('teacherPassword').value;
+
     const success = await postData('pengumuman', 'add', {
         postId, teacherName, teacherRole, teacherClass, subject, content, time,
-        timestamp: new Date().getTime()
+        timestamp: new Date().getTime(), password: teacherPasswordValue
     });
     
     if (success) {
@@ -872,7 +873,8 @@ async function submitAnnouncement() {
         closeAnnouncementModal();
 
         setTimeout(() => {
-            document.querySelector(`[data-post-id="${postId}"]`).scrollIntoView({ behavior: 'smooth', block: 'start' });
+            const el = document.querySelector(`[data-post-id="${postId}"]`);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 100);
     } else {
         alert('Gagal menyimpan pengumuman. Silakan coba lagi.');
@@ -882,9 +884,8 @@ async function submitAnnouncement() {
 function addAnnouncementToDOM(teacherName, teacherRole, teacherClass, subject, content, time, postId) {
     const initials = teacherName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
     
-    // Tentukan role string dan avatar class
     let roleString = teacherRole;
-    let avatarClass = 'teacher'; // default
+    let avatarClass = 'teacher';
     
     if (teacherRole === 'Kepala Sekolah') {
         roleString = 'Kepala Sekolah';
@@ -900,19 +901,20 @@ function addAnnouncementToDOM(teacherName, teacherRole, teacherClass, subject, c
     newPost.className = 'post-card';
     newPost.setAttribute('data-post-id', postId);
     
+    // FIX: semua teks dinamis di-escape sebelum masuk ke innerHTML
     newPost.innerHTML = `
         <div class="post-header">
-            <div class="avatar ${avatarClass}">${initials}</div>
+            <div class="avatar ${avatarClass}">${escapeHtml(initials)}</div>
             <div class="post-info">
-                <div class="post-author">${teacherName}</div>
-                <div class="post-role">${roleString}</div>
-                <div class="post-time">${time}</div>
+                <div class="post-author">${escapeHtml(teacherName)}</div>
+                <div class="post-role">${escapeHtml(roleString)}</div>
+                <div class="post-time">${escapeHtml(time)}</div>
             </div>
             <button class="post-delete-btn" onclick="deletePost('${postId}')" title="Hapus pengumuman">🗑️</button>
         </div>
         <div class="post-content">
-            <span class="post-subject">${subject}</span>
-            <p style="white-space: pre-line;">${content}</p>
+            <span class="post-subject">${escapeHtml(subject)}</span>
+            <p style="white-space: pre-line;">${escapeHtml(content)}</p>
         </div>
         <div class="comments-section">
             <div class="comments-count">💬 0 Komentar</div>
@@ -946,12 +948,13 @@ function addCommentToDOM(postId, userName, studentName, userComment, time, color
     newComment.className = 'comment';
     newComment.setAttribute('data-comment-id', commentId);
     
+    // FIX: escape semua teks dari pengguna
     newComment.innerHTML = `
-        <div class="comment-avatar parent" style="background: ${color};">${initials}</div>
+        <div class="comment-avatar parent" style="background: ${color};">${escapeHtml(initials)}</div>
         <div class="comment-content">
-            <div class="comment-author">${userName} (Orang Tua ${studentName})</div>
-            <div class="comment-text">${userComment}</div>
-            <div class="comment-time">${time}</div>
+            <div class="comment-author">${escapeHtml(userName)} (Orang Tua ${escapeHtml(studentName)})</div>
+            <div class="comment-text">${escapeHtml(userComment)}</div>
+            <div class="comment-time">${escapeHtml(time)}</div>
         </div>
         <button class="delete-btn" onclick="deleteComment(this, '${postId}', '${commentId}')" title="Hapus komentar">✕</button>
     `;
@@ -987,15 +990,13 @@ async function deleteComment(buttonElement, postId, commentId) {
         commentsCount.textContent = `💬 ${Math.max(0, currentCount - 1)} Komentar`;
     }
 
-    // Hapus dari Google Spreadsheet
     await postData('komentar', 'delete', { commentId });
 }
 
 async function deletePost(postId) {
     const password = prompt('Masukkan password guru untuk menghapus pengumuman:');
-    
-    if (!password || password !== TEACHER_PASSWORD) {
-        alert('❌ Password salah atau dibatalkan!');
+
+    if (!password) {
         return;
     }
 
@@ -1003,18 +1004,20 @@ async function deletePost(postId) {
         return;
     }
 
+    // Password dikirim ke backend untuk diverifikasi di server (lihat
+    // handleDeletePengumuman_ di Code.gs). Backend juga otomatis menghapus
+    // semua komentar yang menempel pada postingan ini, jadi kita tidak
+    // perlu lagi memanggil fetchData('komentar', 'getByPostId', ...) di sini.
+    const success = await postData('pengumuman', 'delete', { postId, password });
+
+    if (!success) {
+        alert('❌ Password salah, atau terjadi kesalahan saat menghapus.');
+        return;
+    }
+
     const postElement = document.querySelector(`[data-post-id="${postId}"]`);
     if (postElement) {
         postElement.remove();
-    }
-
-    // Hapus dari Google Spreadsheet
-    await postData('pengumuman', 'delete', { postId });
-    
-    // Hapus semua komentar terkait
-    const comments = await fetchData('komentar', 'getByPostId', postId);
-    for (const comment of comments) {
-        await postData('komentar', 'delete', { commentId: comment.commentId });
     }
 }
 
@@ -1025,6 +1028,11 @@ async function submitComment() {
 
     if (userName === '' || studentName === '' || userComment === '') {
         alert('Mohon isi semua field dengan lengkap!');
+        return;
+    }
+
+    if (!currentPostId) {
+        alert('Terjadi kesalahan: postingan tidak ditemukan. Silakan coba lagi.');
         return;
     }
 
@@ -1045,7 +1053,6 @@ async function submitComment() {
     
     const commentId = 'comment_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     
-    // Simpan ke Google Spreadsheet
     const success = await postData('komentar', 'add', {
         commentId, postId: currentPostId, userName, studentName, userComment, time, 
         color: randomColor, initials, timestamp: new Date().getTime()
@@ -1063,7 +1070,6 @@ async function submitComment() {
     }
 }
 
-// Event listener
 document.getElementById('teacherPassword').addEventListener('keypress', function(e) {
     if (e.key === 'Enter') verifyPassword();
 });
